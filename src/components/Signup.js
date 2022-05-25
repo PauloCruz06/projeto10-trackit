@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import logo from "./assets/images/logo.png";
+import { Loaderspinner } from "./Loaderspinner";
 
 import styled from "styled-components";
 
@@ -11,43 +12,77 @@ export default function Signup(){
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [photo, setPhoto] = useState("");
+    const [loading, setLoading]= useState(false);
+    const navigate = useNavigate();
+
+    function signUp(e){
+        e.preventDefault();
+        setLoading(true);
+    }
+
+    if(loading){
+        const body = {
+            email: email,
+            name: name,
+            image: photo,
+            password: password
+        };
+
+        const promise = axios.post(
+            "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up",
+            body
+        );
+
+        promise.then((re) => {
+            navigate("/");
+        });
+        promise.catch(() => {
+            alert("Erro em fazer cadastro");
+            setLoading(false);
+        });
+    }
 
     return (
         <Div>
             <Image className="logo" alt="TrackIt logo" src={logo} />
-            <Form>
-                <input 
+            <Form onSubmit={loading ? () => {} : signUp}>
+                <input
+                    className={loading ? "pale" : ""}
                     type="email"
                     id="email"
                     placeholder="email"
-                    value={email}
+                    value={loading ? "" : email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
                 <input
+                    className={loading ? "pale" : ""}
                     type="password"
                     id="password"
                     placeholder="senha"
-                    value={password}
+                    value={loading ? "" : password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <input 
+                <input
+                    className={loading ? "pale" : ""}
                     type="text"
                     id="name"
                     placeholder="nome"
-                    value={name}
+                    value={loading ? "" : name}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
                 <input
+                    className={loading ? "pale" : ""}
                     type="url"
                     id="url"
                     placeholder="foto"
-                    value={photo}
+                    value={loading ? "" : photo}
                     onChange={(e) => setPhoto(e.target.value)}
+                    required
                 />
-                <button>Cadastrar</button>
+                <button className={loading ? "pale" : ""} type="submit"> {loading ? <Loaderspinner /> : "Cadastrar"}</button>
             </Form>
             <Link to={"/"}>
                 <p>Já tem uma conta? Faça login!</p>
@@ -55,7 +90,7 @@ export default function Signup(){
         </Div>
     );
 }
-    
+
 
 const Div = styled.div`
     width: 100%;
@@ -85,6 +120,9 @@ const Form = styled.form`
     height: auto;
     display: flex;
     flex-direction: column;
+    .pale{
+        filter: contrast(75%);
+    }
     > input{
         width: 303px;
         height: 45px;
@@ -104,6 +142,9 @@ const Form = styled.form`
     > button{
         width: 303px;
         height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         border-radius: 5px;
         border: none;
         background-color: #52B6FF;
