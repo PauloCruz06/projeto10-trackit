@@ -22,10 +22,12 @@ export default function Menu(){
                         background
                         backgroundPadding={6}
                         styles={buildStyles({
+                            pathTransitionDuration: 0.25,
                             backgroundColor: "#52B6FF",
                             textColor: "#fff",
                             pathColor: "#fff",
-                            trailColor: "transparent"
+                            trailColor: "transparent",
+                            strokeLinecap: "round"
                         })}
                     />
                     <p>Hoje</p>
